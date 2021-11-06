@@ -1,7 +1,0 @@
-import bpy 
-import numpy as np 
-
-y=0
-for i in range(21):
-    y += 2
-    bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, y, 1), scale=(1, 1, 1))
