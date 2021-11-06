@@ -1,0 +1,32 @@
+import bpy
+import mathutils
+import numpy as np
+
+def insert_key(obj, start_frame, middle_frame ,end_frame):
+    obj.keyframe_insert(data_path = 'location', frame = start_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = start_frame)
+    
+    vec = mathutils.Vector((0, 0, 10))
+    obj.location += vec
+    obj.scale += vec
+    obj.keyframe_insert(data_path = 'location', frame = middle_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = middle_frame)
+    
+    obj.location -= vec
+    obj.scale -= vec
+    obj.keyframe_insert(data_path = 'location', frame = end_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = end_frame)
+
+cube_array = bpy.data.collections[0].objects
+cube_list = list(range(21))
+cube_prob1 = list(np.linspace(0.02, 0.07, 10))
+cube_prob2 = [0.1] 
+cube_prob3 = list(np.linspace(0.07, 0.02, 10)) 
+cube_prob = cube_prob1 + cube_prob2 + cube_prob3
+
+
+for i in range(5, 1000, 5):
+    rand = np.random.choice(cube_list, 1 ,cube_prob)[0]
+    insert_key(cube_array[rand], i, i+5, i+10) 
+
+    

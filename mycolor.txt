@@ -1,0 +1,13 @@
+import bpy
+
+def make_color(obj):
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    bpy.data.materials["Material.002"].node_tree.nodes["Glass BSDF"].inputs[0].default_value = (0.304987, 0.846874, 0.89627, 1)
+    bpy.context.object.active_material.blend_method = 'BLEND'
+    obj.select_set(False)
+
+cube_array = bpy.data.collections[0].objects
+
+for i in range(3, 22): 
+    make_color(cube_array[i])

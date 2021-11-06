@@ -1,0 +1,56 @@
+import bpy
+import random
+
+C = bpy.context
+src_obj1 =  bpy.data.collections[0].objects['Cylinder.007']
+src_obj2 =  bpy.data.collections[0].objects['Sphere.007']
+src_obj3 =  bpy.data.collections[0].objects['Light.006']
+
+def make_match(x, y, z):
+    
+    new_obj1 = src_obj1.copy()   
+    new_obj2 = src_obj2.copy()
+    new_obj3 = src_obj3.copy() 
+    
+    new_obj1.data = src_obj1.data.copy()
+    new_obj2.data = src_obj2.data.copy()
+    new_obj3.data = src_obj3.data.copy()
+    
+    new_obj1.location.x = x
+    new_obj1.location.y = y
+    new_obj1.location.z = z
+    
+    new_obj2.location.x = x
+    new_obj2.location.y = y
+    new_obj2.location.z = z + 1.2
+    
+    new_obj3.location.x = x
+    new_obj3.location.y = y
+    new_obj3.location.z = z + 3
+    
+    C.collection.objects.link(new_obj2)
+    
+    bpy.context.view_layer.objects.active = new_obj2
+    new_obj2.select_set(True)
+    bpy.ops.object.quick_smoke()
+    
+    new_obj2.modifiers['Fluid'].flow_settings.flow_type = 'FIRE'
+    
+    C.collection.objects.link(new_obj1)
+    C.collection.objects.link(new_obj3)
+        
+    
+def  adjust_fire(obj_name, light_name, start, end, r, g, b):
+    obj = bpy.data.objects[obj_name]
+    mat_name = bpy.data.objects[obj_name].material_slots[0].material.name
+    mat = bpy.data.materials[mat_name]
+    obj.modifiers['Fluid'].domain_settings.use_adaptive_domain = True
+    obj.modifiers['Fluid'].domain_settings.cache_frame_start = start
+    obj.modifiers['Fluid'].domain_settings.cache_frame_end = end
+    mat.node_tree.nodes['Principled Volume'].inputs[8].default_value = 1
+    mat.node_tree.nodes['Principled Volume'].inputs[9].default_value = (0,0,1,1)
+    bpy.data.lights[light_name].color  = (r,g,b)
+    
+    
+make_match (-76, 3, 1.5)
+adjust_fire('Smoke Domain.011', 'Light.014', 786, 1000, 0.356, 0.880, 1)

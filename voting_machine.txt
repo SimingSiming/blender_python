@@ -1,0 +1,120 @@
+import mathutils
+import numpy as np
+import random
+import bpy
+
+def create_collections():
+    for i in range(10): 
+        bpy.ops.mesh.primitive_cube_add()
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['myObjects'].objects.link(obj)
+
+    for i in range(10): 
+        bpy.ops.mesh.primitive_uv_sphere_add()
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['myObjects'].objects.link(obj)
+        
+    for i in range(10): 
+        bpy.ops.mesh.primitive_ico_sphere_add()
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['myObjects'].objects.link(obj)
+        
+    for i in range(10): 
+        bpy.ops.mesh.primitive_cylinder_add()
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['myObjects'].objects.link(obj)
+        
+    for i in range(10): 
+        bpy.ops.mesh.primitive_cone_add() 
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['myObjects'].objects.link(obj)
+        
+    for i in range(5):
+        bpy.ops.mesh.primitive_cube_add(location = (0, -8 - i*2, 1))
+        obj = bpy.context.active_object
+        bpy.ops.collection.objects_remove_all()
+        bpy.data.collections['clt_new'].objects.link(obj)
+
+
+
+def insert_key(obj, start_frame, middle_frame1, middle_frame2, end_frame):
+    obj.location = (0, 0, 7.2)
+    obj.scale = (0, 0, 0)
+    obj.keyframe_insert(data_path = 'location', frame = start_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = start_frame)
+    
+    scale_vec = mathutils.Vector((0.5, 0.5, 0.5))
+    
+    obj.scale += scale_vec
+    obj.keyframe_insert(data_path = 'location', frame = middle_frame1)
+    obj.keyframe_insert(data_path = 'scale', frame = middle_frame1)
+    
+    location_vec = mathutils.Vector((0, 0, -5))
+    
+    obj.location += location_vec
+    obj.keyframe_insert(data_path = 'location', frame = middle_frame2)
+    obj.keyframe_insert(data_path = 'scale', frame = middle_frame2)
+    
+    obj.scale -= scale_vec
+    obj.keyframe_insert(data_path = 'location', frame = end_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = end_frame)
+    
+def insert_key_clt(obj, start_frame, middle_frame ,end_frame):
+    obj.keyframe_insert(data_path = 'location', frame = start_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = start_frame)
+    
+    vec = mathutils.Vector((0, 0, 5))
+    obj.location += vec
+    obj.scale += vec
+    obj.keyframe_insert(data_path = 'location', frame = middle_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = middle_frame)
+    
+    obj.location -= vec
+    obj.scale -= vec
+    obj.keyframe_insert(data_path = 'location', frame = end_frame)
+    obj.keyframe_insert(data_path = 'scale', frame = end_frame)
+    
+
+create_collections()
+
+obj_array = bpy.data.collections['myObjects'].objects
+clt_array = bpy.data.collections['clt_new'].objects
+
+## make their starting at location (0,0, 7.2), scale = (0,0,0) at frame1
+for i in obj_array:
+    i.location = (0, 0, 7.2)
+    i.scale = (0, 0, 0)
+    i.keyframe_insert(data_path = 'location', frame = 1)
+    i.keyframe_insert(data_path = 'scale', frame = 1)
+
+for i in range(0, 700, 40):
+    pick = random.randrange(0, 50)
+    random_obj = obj_array[pick] 
+    start = 1 + i
+    mid1 = 10 + i
+    mid2 = 30 + i 
+    end = 40 + i
+    insert_key(random_obj, start, mid1, mid2, end)
+    
+    idx = pick // 10
+    cube_obj = clt_array[idx] 
+    insert_key_clt(cube_obj, mid2, end, end + 5) 
+
+
+#cube_list = list(range(21))
+#cube_prob1 = list(np.linspace(0.02, 0.07, 10))
+#cube_prob2 = [0.1] 
+#cube_prob3 = list(np.linspace(0.07, 0.02, 10)) 
+#cube_prob = cube_prob1 + cube_prob2 + cube_prob3
+
+
+#for i in range(5, 1000, 5):
+#    rand = np.random.choice(cube_list, 1 ,cube_prob)[0]
+#    insert_key(cube_array[rand], i, i+5, i+10) 
+
+    
